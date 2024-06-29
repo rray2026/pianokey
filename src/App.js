@@ -3,12 +3,14 @@ import * as Tone from 'tone';
 import './App.css';
 import keyBindings from './keyBindings.json';
 import Keyboard from './Keyboard';
+import PlayedNotes from './PlayedNotes';
 
 function App() {
   const synthsRef = useRef({});
   const activeNotes = useRef({});
   const [activeKeys, setActiveKeys] = useState([]);
   const [eventLog, setEventLog] = useState([]);
+  const [playedNotes, setPlayedNotes] = useState([]);
 
   useEffect(() => {
     // 初始化每个音符对应的 Synth 实例
@@ -23,6 +25,7 @@ function App() {
         setActiveKeys(prevKeys => [...prevKeys, event.key]);
         playNoteStart(note);
         logKeyEvent(event);
+        setPlayedNotes(prevNotes => [...prevNotes, note]);
       }
     };
 
@@ -71,6 +74,7 @@ function App() {
         <p>Press keys A, S, D, F, G, H, J, K to play notes</p>
       </header>
       <div className="piano-container">
+        <PlayedNotes notes={playedNotes} />
         <Keyboard activeKeys={activeKeys} />
       </div>
       <div className="event-log">

@@ -1,0 +1,22 @@
+/* src/PlayedNotes.css */
+.played-notes {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .played-notes .note {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    background-color: #eee;
+    font-size: 16px;
+    color: #333;
+    white-space: nowrap;
+  }
+  

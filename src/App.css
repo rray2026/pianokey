@@ -1,18 +1,24 @@
+/* src/App.css */
 .App {
   text-align: center;
 }
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 20px;
   color: white;
 }
 
-p {
-  font-size: 1.2em;
+.piano-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.event-log {
+  margin: 20px;
+  text-align: left;
+  max-width: 600px;
+  margin: 0 auto;
 }
