@@ -12,6 +12,7 @@ function App() {
   const [eventLog, setEventLog] = useState([]);
   const [playedNotes, setPlayedNotes] = useState([]);
   const [audioContextUnlocked, setAudioContextUnlocked] = useState(false);
+  const maxPlayedNotes = 10;  // 设置要显示的音符的最大数量
 
   useEffect(() => {
     // 初始化每个音符对应的 Synth 实例
@@ -57,9 +58,12 @@ function App() {
       setActiveKeys(prevKeys => [...prevKeys, event.key]);
       playNoteStart(note);
       logKeyEvent(event);
-      setPlayedNotes(prevNotes => [...prevNotes, note]);
+      setPlayedNotes(prevNotes => {
+        const newNotes = [...prevNotes, note];
+        return newNotes.length > maxPlayedNotes ? newNotes.slice(newNotes.length - maxPlayedNotes) : newNotes;
+      });
     }
-  }, [playNoteStart]);
+  }, [playNoteStart, maxPlayedNotes]);
 
   const handleKeyUp = useCallback((event) => {
     const note = keyBindings[event.key];
@@ -78,7 +82,7 @@ function App() {
     const timestamp = new Date().toLocaleTimeString();
 
     const logMessage = `${timestamp} - ${eventType}: Key ${key} (Code ${code})`;
-    setEventLog(prevLog => [...prevLog, logMessage]);
+    setEventLog(prevLog => [...prevLog, logMessage]);  // 将新日志添加到数组末尾
   };
 
   useEffect(() => {
@@ -98,13 +102,13 @@ function App() {
         <p>Press keys A, S, D, F, G, H, J, K to play notes</p>
       </header>
       <div className="piano-container">
-        <Keyboard activeKeys={activeKeys} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} />
         <PlayedNotes notes={playedNotes} />
+        <Keyboard activeKeys={activeKeys} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} />
       </div>
       <div className="event-log">
         <h2>Event Log</h2>
         <ul>
-          {eventLog.map((log, index) => (
+          {eventLog.slice().reverse().map((log, index) => (
             <li key={index}>{log}</li>
           ))}
         </ul>
