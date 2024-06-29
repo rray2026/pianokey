@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as Tone from 'tone';
 import './App.css';
 import keyBindings from './keyBindings.json';
@@ -17,17 +17,28 @@ function App() {
     Object.keys(keyBindings).forEach(key => {
       synthsRef.current[keyBindings[key]] = new Tone.Synth().toDestination();
     });
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
   }, []);
 
-  const handleKeyDown = (event) => {
+  const playNoteStart = useCallback((note) => {
+    synthsRef.current[note].triggerAttack(note);
+  }, []);
+
+  const playNoteEnd = useCallback((note) => {
+    const now = Tone.now();
+    synthsRef.current[note].triggerRelease(now);
+  }, []);
+
+  const logKeyEvent = useCallback((event) => {
+    const eventType = event.type;
+    const key = event.key;
+    const code = event.code;
+    const timestamp = new Date().toLocaleTimeString();
+
+    const logMessage = `${timestamp} - ${eventType}: Key ${key} (Code ${code})`;
+    setEventLog(prevLog => [...prevLog, logMessage]);
+  }, []);
+
+  const handleKeyDown = useCallback((event) => {
     const note = keyBindings[event.key];
     if (note && !activeNotes.current[note]) {
       activeNotes.current[note] = true;
@@ -36,9 +47,9 @@ function App() {
       logKeyEvent(event);
       setPlayedNotes(prevNotes => [...prevNotes, note]);
     }
-  };
+  }, [logKeyEvent, playNoteStart]);
 
-  const handleKeyUp = (event) => {
+  const handleKeyUp = useCallback((event) => {
     const note = keyBindings[event.key];
     if (note && activeNotes.current[note]) {
       playNoteEnd(note);
@@ -46,26 +57,17 @@ function App() {
       setActiveKeys(prevKeys => prevKeys.filter(key => key !== event.key));
       logKeyEvent(event);
     }
-  };
+  }, [logKeyEvent, playNoteEnd]);
 
-  const playNoteStart = (note) => {
-    synthsRef.current[note].triggerAttack(note);
-  };
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
 
-  const playNoteEnd = (note) => {
-    const now = Tone.now();
-    synthsRef.current[note].triggerRelease(now);
-  };
-
-  const logKeyEvent = (event) => {
-    const eventType = event.type;
-    const key = event.key;
-    const code = event.code;
-    const timestamp = new Date().toLocaleTimeString();
-
-    const logMessage = `${timestamp} - ${eventType}: Key ${key} (Code ${code})`;
-    setEventLog(prevLog => [...prevLog, logMessage]);
-  };
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [handleKeyDown, handleKeyUp]);
 
   return (
     <div className="App">
