@@ -2,7 +2,9 @@ name: Deploy-Github-Pages
 
 on:
   workflow_dispatch:
-
+  push:
+    branches:
+      - 'main'
 jobs:
   deploy-react-to-gh-pages:
     runs-on: ubuntu-latest
