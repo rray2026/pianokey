@@ -3,46 +3,42 @@ import React from 'react';
 import './Keyboard.css';
 import keyBindings from './keyBindings.json';
 
-const row1 = 'qwertyuiop'.split('');
-const row2 = 'asdfghjkl'.split('');
-const row3 = 'zxcvbnm'.split('');
+const Keyboard = ({ activeKeys, onKeyDown, onKeyUp }) => {
+  const handleMouseDown = (key) => {
+    if (keyBindings[key]) {
+      onKeyDown({ key });
+    }
+  };
 
-const Keyboard = ({ activeKeys }) => {
+  const handleMouseUp = (key) => {
+    if (keyBindings[key]) {
+      onKeyUp({ key });
+    }
+  };
+
+  const keys = [
+    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+    ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+  ];
+
   return (
     <div className="keyboard">
-      <div className="keyboard-row">
-        {row1.map(key => (
-          <div
-            key={key}
-            className={`key ${activeKeys.includes(key) ? 'active' : ''} ${keyBindings[key] ? 'bound' : 'unbound'}`}
-          >
-            {key.toUpperCase()}
-            {keyBindings[key] && <span className="note">{keyBindings[key]}</span>}
-          </div>
-        ))}
-      </div>
-      <div className="keyboard-row">
-        {row2.map(key => (
-          <div
-            key={key}
-            className={`key ${activeKeys.includes(key) ? 'active' : ''} ${keyBindings[key] ? 'bound' : 'unbound'}`}
-          >
-            {key.toUpperCase()}
-            {keyBindings[key] && <span className="note">{keyBindings[key]}</span>}
-          </div>
-        ))}
-      </div>
-      <div className="keyboard-row">
-        {row3.map(key => (
-          <div
-            key={key}
-            className={`key ${activeKeys.includes(key) ? 'active' : ''} ${keyBindings[key] ? 'bound' : 'unbound'}`}
-          >
-            {key.toUpperCase()}
-            {keyBindings[key] && <span className="note">{keyBindings[key]}</span>}
-          </div>
-        ))}
-      </div>
+      {keys.map((row, rowIndex) => (
+        <div key={rowIndex} className="keyboard-row">
+          {row.map((key) => (
+            <div
+              key={key}
+              className={`key ${keyBindings[key] ? 'bound' : 'unbound'} ${activeKeys.includes(key) ? 'active' : ''}`}
+              onMouseDown={() => handleMouseDown(key)}
+              onMouseUp={() => handleMouseUp(key)}
+            >
+              {key}
+              {keyBindings[key] && <div className="note">{keyBindings[key]}</div>}
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };

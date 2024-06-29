@@ -18,46 +18,6 @@ function App() {
       synthsRef.current[keyBindings[key]] = new Tone.Synth().toDestination();
     });
 
-    const handleKeyDown = (event) => {
-      const note = keyBindings[event.key];
-      if (note && !activeNotes.current[note]) {
-        activeNotes.current[note] = true;
-        setActiveKeys(prevKeys => [...prevKeys, event.key]);
-        playNoteStart(note);
-        logKeyEvent(event);
-        setPlayedNotes(prevNotes => [...prevNotes, note]);
-      }
-    };
-
-    const handleKeyUp = (event) => {
-      const note = keyBindings[event.key];
-      if (note && activeNotes.current[note]) {
-        playNoteEnd(note);
-        delete activeNotes.current[note];
-        setActiveKeys(prevKeys => prevKeys.filter(key => key !== event.key));
-        logKeyEvent(event);
-      }
-    };
-
-    const playNoteStart = (note) => {
-      synthsRef.current[note].triggerAttack(note);
-    };
-
-    const playNoteEnd = (note) => {
-      const now = Tone.now();
-      synthsRef.current[note].triggerRelease(now);
-    };
-
-    const logKeyEvent = (event) => {
-      const eventType = event.type;
-      const key = event.key;
-      const code = event.code;
-      const timestamp = new Date().toLocaleTimeString();
-
-      const logMessage = `${timestamp} - ${eventType}: Key ${key} (Code ${code})`;
-      setEventLog(prevLog => [...prevLog, logMessage]);
-    };
-
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
@@ -67,6 +27,46 @@ function App() {
     };
   }, []);
 
+  const handleKeyDown = (event) => {
+    const note = keyBindings[event.key];
+    if (note && !activeNotes.current[note]) {
+      activeNotes.current[note] = true;
+      setActiveKeys(prevKeys => [...prevKeys, event.key]);
+      playNoteStart(note);
+      logKeyEvent(event);
+      setPlayedNotes(prevNotes => [...prevNotes, note]);
+    }
+  };
+
+  const handleKeyUp = (event) => {
+    const note = keyBindings[event.key];
+    if (note && activeNotes.current[note]) {
+      playNoteEnd(note);
+      delete activeNotes.current[note];
+      setActiveKeys(prevKeys => prevKeys.filter(key => key !== event.key));
+      logKeyEvent(event);
+    }
+  };
+
+  const playNoteStart = (note) => {
+    synthsRef.current[note].triggerAttack(note);
+  };
+
+  const playNoteEnd = (note) => {
+    const now = Tone.now();
+    synthsRef.current[note].triggerRelease(now);
+  };
+
+  const logKeyEvent = (event) => {
+    const eventType = event.type;
+    const key = event.key;
+    const code = event.code;
+    const timestamp = new Date().toLocaleTimeString();
+
+    const logMessage = `${timestamp} - ${eventType}: Key ${key} (Code ${code})`;
+    setEventLog(prevLog => [...prevLog, logMessage]);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -74,8 +74,8 @@ function App() {
         <p>Press keys A, S, D, F, G, H, J, K to play notes</p>
       </header>
       <div className="piano-container">
+        <Keyboard activeKeys={activeKeys} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} />
         <PlayedNotes notes={playedNotes} />
-        <Keyboard activeKeys={activeKeys} />
       </div>
       <div className="event-log">
         <h2>Event Log</h2>
