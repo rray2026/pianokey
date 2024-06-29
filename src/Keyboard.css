@@ -1,0 +1,50 @@
+/* src/Keyboard.css */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.keyboard-row {
+  display: flex;
+}
+
+.key {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 2px;
+  background-color: #fff;
+  color: #000;
+  position: relative;
+  z-index: 1;
+}
+
+.key .note {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 8px; /* 增大音符的字体大小 */
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.key.bound {
+  background-color: #fff;
+}
+
+.key.unbound {
+  background-color: #f0f0f0;
+  color: #aaa;
+}
+
+.key.active {
+  background-color: #4caf50;
+  color: white;
+}

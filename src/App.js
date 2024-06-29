@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as Tone from 'tone';
 import './App.css';
 import keyBindings from './keyBindings.json';
+import Keyboard from './Keyboard';
 
 function App() {
   const synthsRef = useRef({});
   const activeNotes = useRef({});
+  const [activeKeys, setActiveKeys] = useState([]);
   const [eventLog, setEventLog] = useState([]);
 
   useEffect(() => {
@@ -18,6 +20,7 @@ function App() {
       const note = keyBindings[event.key];
       if (note && !activeNotes.current[note]) {
         activeNotes.current[note] = true;
+        setActiveKeys(prevKeys => [...prevKeys, event.key]);
         playNoteStart(note);
         logKeyEvent(event);
       }
@@ -28,6 +31,7 @@ function App() {
       if (note && activeNotes.current[note]) {
         playNoteEnd(note);
         delete activeNotes.current[note];
+        setActiveKeys(prevKeys => prevKeys.filter(key => key !== event.key));
         logKeyEvent(event);
       }
     };
@@ -67,7 +71,7 @@ function App() {
         <p>Press keys A, S, D, F, G, H, J, K to play notes</p>
       </header>
       <div className="piano-container">
-        {/* Piano keys and UI here */}
+        <Keyboard activeKeys={activeKeys} />
       </div>
       <div className="event-log">
         <h2>Event Log</h2>
