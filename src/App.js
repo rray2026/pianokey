@@ -11,13 +11,35 @@ function App() {
   const [activeKeys, setActiveKeys] = useState([]);
   const [eventLog, setEventLog] = useState([]);
   const [playedNotes, setPlayedNotes] = useState([]);
+  const [audioContextUnlocked, setAudioContextUnlocked] = useState(false);
 
   useEffect(() => {
     // 初始化每个音符对应的 Synth 实例
     Object.keys(keyBindings).forEach(key => {
       synthsRef.current[keyBindings[key]] = new Tone.Synth().toDestination();
     });
-  }, []);
+
+    // 添加全局的用户交互事件监听器以解锁音频上下文
+    const unlockAudioContext = () => {
+      if (!audioContextUnlocked) {
+        Tone.start();
+        setAudioContextUnlocked(true);
+        window.removeEventListener('mousedown', unlockAudioContext);
+        window.removeEventListener('touchstart', unlockAudioContext);
+        window.removeEventListener('keydown', unlockAudioContext);
+      }
+    };
+
+    window.addEventListener('mousedown', unlockAudioContext);
+    window.addEventListener('touchstart', unlockAudioContext);
+    window.addEventListener('keydown', unlockAudioContext);
+
+    return () => {
+      window.removeEventListener('mousedown', unlockAudioContext);
+      window.removeEventListener('touchstart', unlockAudioContext);
+      window.removeEventListener('keydown', unlockAudioContext);
+    };
+  }, [audioContextUnlocked]);
 
   const playNoteStart = useCallback((note) => {
     synthsRef.current[note].triggerAttack(note);
@@ -26,16 +48,6 @@ function App() {
   const playNoteEnd = useCallback((note) => {
     const now = Tone.now();
     synthsRef.current[note].triggerRelease(now);
-  }, []);
-
-  const logKeyEvent = useCallback((event) => {
-    const eventType = event.type;
-    const key = event.key;
-    const code = event.code;
-    const timestamp = new Date().toLocaleTimeString();
-
-    const logMessage = `${timestamp} - ${eventType}: Key ${key} (Code ${code})`;
-    setEventLog(prevLog => [...prevLog, logMessage]);
   }, []);
 
   const handleKeyDown = useCallback((event) => {
@@ -47,7 +59,7 @@ function App() {
       logKeyEvent(event);
       setPlayedNotes(prevNotes => [...prevNotes, note]);
     }
-  }, [logKeyEvent, playNoteStart]);
+  }, [playNoteStart]);
 
   const handleKeyUp = useCallback((event) => {
     const note = keyBindings[event.key];
@@ -57,7 +69,17 @@ function App() {
       setActiveKeys(prevKeys => prevKeys.filter(key => key !== event.key));
       logKeyEvent(event);
     }
-  }, [logKeyEvent, playNoteEnd]);
+  }, [playNoteEnd]);
+
+  const logKeyEvent = (event) => {
+    const eventType = event.type;
+    const key = event.key;
+    const code = event.code;
+    const timestamp = new Date().toLocaleTimeString();
+
+    const logMessage = `${timestamp} - ${eventType}: Key ${key} (Code ${code})`;
+    setEventLog(prevLog => [...prevLog, logMessage]);
+  };
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
