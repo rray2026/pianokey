@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/pianokey/static/css/main.73249d62.css",
-    "main.js": "/pianokey/static/js/main.796d5f55.js",
+    "main.css": "/pianokey/static/css/main.9af4616b.css",
+    "main.js": "/pianokey/static/js/main.d0e0ac04.js",
     "static/js/453.c17c276a.chunk.js": "/pianokey/static/js/453.c17c276a.chunk.js",
     "index.html": "/pianokey/index.html",
-    "main.73249d62.css.map": "/pianokey/static/css/main.73249d62.css.map",
-    "main.796d5f55.js.map": "/pianokey/static/js/main.796d5f55.js.map",
+    "main.9af4616b.css.map": "/pianokey/static/css/main.9af4616b.css.map",
+    "main.d0e0ac04.js.map": "/pianokey/static/js/main.d0e0ac04.js.map",
     "453.c17c276a.chunk.js.map": "/pianokey/static/js/453.c17c276a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.73249d62.css",
-    "static/js/main.796d5f55.js"
+    "static/css/main.9af4616b.css",
+    "static/js/main.d0e0ac04.js"
   ]
 }
