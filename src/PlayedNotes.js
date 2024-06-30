@@ -1,16 +1,32 @@
-import React from 'react';
+// src/PlayedNotes.js
+
+import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import './PlayedNotes.css';
 
-const PlayedNotes = ({ notes }) => {
+const PlayedNotes = forwardRef((_, ref) => {
+  const [notes, setNotes] = useState([]);
+  const maxNotes = 10;
+
+  const addNote = (note) => {
+    setNotes((prevNotes) => {
+      const newNotes = [...prevNotes, note];
+      return newNotes.length > maxNotes ? newNotes.slice(newNotes.length - maxNotes) : newNotes;
+    });
+  };
+
+  useImperativeHandle(ref, () => ({
+    addNote,
+  }));
+
   return (
     <div className="played-notes">
       {notes.map((note, index) => (
-        <span key={index} className="note">
+        <div key={index} className="note">
           {note}
-        </span>
+        </div>
       ))}
     </div>
   );
-};
+});
 
 export default PlayedNotes;

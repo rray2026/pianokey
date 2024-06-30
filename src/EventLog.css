@@ -1,0 +1,16 @@
+/* src/EventLog.css */
+.event-log {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: #f9f9f9;
+  }
+  
+  .event-log p {
+    margin: 0;
+    padding: 2px 0;
+    font-family: monospace;
+    font-size: 12px;
+  }
+  
